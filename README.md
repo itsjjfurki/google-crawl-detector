@@ -1,6 +1,6 @@
 # Google Crawl Detector
 
-Google Crawl Detector is a Laravel package that enables logging each request made by Google.
+Google Crawl Detector is a Laravel package that enables logging each request made by Google. It is essential for websites that want to improve their SEO performance to log every request made by Google crawlers. Doing so allows webmasters to obtain valuable insights into how Google crawls and indexes their website. This information can be used to detect potential crawl errors, indexation problems, and areas where optimization is possible.
 
 ## Installation:
 
