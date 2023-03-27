@@ -1,0 +1,39 @@
+{
+    "name": "itsjjfurki/google-crawl-detector",
+    "description": "Logs each request made by Google crawlers.",
+    "homepage": "https://github.com/itsjjfurki/google-crawl-detector",
+    "keywords": [
+        "itsjjfurki",
+        "google",
+        "crawl",
+        "detector",
+        "google-crawl-detector"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Itsjjfurki\\GoogleCrawlDetector\\": "src"
+        }
+    },
+    "authors": [
+        {
+            "name": "Furkan OZTURK",
+            "email": "me@furkanozturk.dev",
+            "homepage": "https://furkanozturk.dev",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.0",
+        "laravel/framework": ">=9.19"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Itsjjfurki\\GoogleCrawlDetector\\GoogleCrawlDetectorServiceProvider"
+            ]
+        }
+    }
+}
