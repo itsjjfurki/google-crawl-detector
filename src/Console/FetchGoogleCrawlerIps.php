@@ -3,8 +3,9 @@
 namespace Itsjjfurki\GoogleCrawlDetector\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Itsjjfurki\GoogleCrawlDetector\Services\IPv4CIDRService;
+use stdClass;
 
 class FetchGoogleCrawlerIps extends Command
 {
@@ -25,45 +26,40 @@ class FetchGoogleCrawlerIps extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    public function handle(IPv4CIDRService $service): void
     {
-        $google_ipranges_url = 'https://developers.google.com/static/search/apis/ipranges/googlebot.json';
-        $ipv4Label = 'ipv4Prefix';
-
         try {
-            $response = Http::get($google_ipranges_url);
-
-            $ip_list = json_decode($response->body());
-
-            $resolved_ip_list = [];
-
-            foreach ($ip_list->prefixes as $ip_range) {
-                if (property_exists($ip_range, $ipv4Label)) {
-                    $ip_cidr = (string) $ip_range->{$ipv4Label};
-                    $range = $this->cidr_to_range($ip_cidr);
-                    $start_ip = ip2long($range[0]);
-                    $end_ip = ip2long($range[1]);
-                    for ($i = $start_ip; $i <= $end_ip; $i++) {
-                        $resolved_ip_list[] = long2ip($i);
-                    }
-                }
+            $addresses = [];
+            foreach ($this->fetchIPv4CIDRsFromGoogle() as $cidr) {
+                $addresses = array_merge($addresses, $service->resolveCIDR($cidr));
             }
-
-            Cache::forever('googleCrawlerIpList', json_encode($resolved_ip_list));
-
-            $this->info("Google Crawler IP's fetched!");
+            cache()->forever((string) config('googlecrawldetector.cache_key'), json_encode($addresses));
+            $this->info('Google crawler IPs fetched successfully!');
         } catch (\Exception $e) {
-            $this->error('googlecrawlerips:fetch command failed!');
+            $this->error('Oops! Something went wrong.');
+            $this->error($e->getMessage());
         }
     }
 
-    private function cidr_to_range($cidr)
+    /**
+     * Fetches IPv4 CIDRs from Google's IP address list API endpoint.
+     *
+     * @return string[] An array of IPv4 CIDRs retrieved from the Google API endpoint.
+     */
+    protected function fetchIPv4CIDRsFromGoogle(): array
     {
-        $range = [];
-        $cidr = explode('/', $cidr);
-        $range[0] = long2ip((ip2long($cidr[0])) & ((-1 << (32 - (int) $cidr[1]))));
-        $range[1] = long2ip((ip2long($range[0])) + pow(2, (32 - (int) $cidr[1])) - 1);
+        $response = Http::get((string) config('googlecrawldetector.googlebot_url'));
 
-        return $range;
+        /** @var stdClass $body */
+        $body = json_decode($response->body()) ?? new stdClass();
+        if (! property_exists($body, 'prefixes')) {
+            return [];
+        }
+
+        /** @var stdClass[] $prefixes */
+        $prefixes = $body->prefixes ?? [];
+        $prefixes = array_filter($prefixes, fn (stdClass $prefix) => property_exists($prefix, 'ipv4Prefix'));
+
+        return array_map(fn (stdClass $prefix) => (string) $prefix->ipv4Prefix, $prefixes);
     }
 }
