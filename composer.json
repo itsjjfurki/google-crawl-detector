@@ -12,7 +12,13 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Itsjjfurki\\GoogleCrawlDetector\\": "src"
+            "Itsjjfurki\\GoogleCrawlDetector\\": "src",
+            "Itsjjfurki\\GoogleCrawlDetector\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Itsjjfurki\\GoogleCrawlDetector\\Tests\\": "tests"
         }
     },
     "authors": [
@@ -29,11 +35,35 @@
         "php": ">=8.0",
         "laravel/framework": ">=9.19"
     },
+    "require-dev": {
+        "guzzlehttp/guzzle": "^7.5",
+        "laravel/pint": "^1.7",
+        "orchestra/testbench": "^8.1",
+        "phpunit/phpunit": "^10.0",
+        "psalm/plugin-laravel": "^2.8",
+        "vimeo/psalm": "^5.8"
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "Itsjjfurki\\GoogleCrawlDetector\\GoogleCrawlDetectorServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php vendor/bin/testbench package:discover --ansi"
+        ],
+        "psalm": "psalm",
+        "pint": "pint",
+        "test": "phpunit",
+        "check": [
+            "@psalm",
+            "@pint",
+            "@test"
+        ]
+    },
+    "config": {
+        "sort-packages": true
     }
 }
