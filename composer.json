@@ -27,6 +27,11 @@
             "email": "me@furkanozturk.dev",
             "homepage": "https://furkanozturk.dev",
             "role": "Developer"
+        },
+        {
+            "name": "David Majoulian",
+            "email": "david.majoulian@gmail.com",
+            "role": "Developer"
         }
     ],
     "minimum-stability": "dev",
