@@ -3,7 +3,7 @@
 namespace Itsjjfurki\GoogleCrawlDetector;
 
 use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Foundation\Http\Kernel;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
 use Itsjjfurki\GoogleCrawlDetector\Console\FetchGoogleCrawlerIps;
 use Itsjjfurki\GoogleCrawlDetector\Http\Middleware\DetectGoogleCrawl;
