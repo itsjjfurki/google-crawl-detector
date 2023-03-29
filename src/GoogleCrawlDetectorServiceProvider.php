@@ -23,7 +23,10 @@ class GoogleCrawlDetectorServiceProvider extends ServiceProvider
      */
     public function boot(Kernel $kernel): void
     {
-        if (array_key_exists('web', $kernel->getMiddlewareGroups())) {
+        if (
+            $kernel instanceof \Illuminate\Foundation\Http\Kernel &&
+            array_key_exists('web', $kernel->getMiddlewareGroups())
+        ) {
             $kernel->appendMiddlewareToGroup('web', DetectGoogleCrawl::class);
         }
 
